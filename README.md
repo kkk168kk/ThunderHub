@@ -1,5 +1,7 @@
 # Thunder·HUB 启动台
 
+**中文** | [English](README_EN.md)
+
 ![Thunder·HUB](docs/hero.jpg)
 
 > AI 时代，每个人桌面上都躺着一堆 bat——Thunder·HUB 把它们收进来、分好类、一键启动。
