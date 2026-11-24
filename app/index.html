@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thunder·HUB 启动台</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23f6f1e6'/%3E%3Crect x='2' y='2' width='28' height='28' rx='6' fill='none' stroke='%231b1712' stroke-width='2'/%3E%3Ctext x='15' y='22' font-family='Georgia' font-weight='bold' font-size='16' fill='%231b1712' text-anchor='middle'%3EB%3C/text%3E%3Ccircle cx='24' cy='8' r='4' fill='%23d2401e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Noto+Serif+SC:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- 自绘标题栏（无边框窗口模式） -->
+<div class="titlebar" id="titlebar">
+  <div class="tb-drag pywebview-drag-region" id="tbDrag">
+    <div class="brand">
+      <img class="brand-logo" src="brand-logo.png" alt="Thunder·HUB" draggable="false">
+    </div>
+  </div>
+
+  <div class="tb-search search" id="searchWrap">
+    <svg viewBox="0 0 24 24" class="search-ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="search" type="text" data-i18n-ph="search_ph" placeholder="搜一下收藏…" autocomplete="off" spellcheck="false">
+    <kbd>/</kbd>
+  </div>
+
+  <div class="tb-btns">
+    <button class="tb-btn tb-lang" id="tbLang" title="语言 / Language">中</button>
+    <button class="tb-btn" id="tbSettings" data-i18n-title="set_tip" title="设置">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
+    <button class="tb-btn" id="tbMin" data-i18n-title="min_tip" title="最小化">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>
+    </button>
+    <button class="tb-btn" id="tbMax" data-i18n-title="max_tip" title="最大化 / 还原">
+      <svg class="ico-max" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+      <svg class="ico-restore" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+    </button>
+    <button class="tb-btn tb-close" id="tbClose" data-i18n-title="close_tip" title="收进系统托盘">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="body-wrap">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <span class="side-title lbl" data-i18n="cats">分类</span>
+      <button class="side-collapse" id="collapseBtn" data-i18n-title="collapsed_tip" title="收起 / 展开">
+        <svg class="ico-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg>
+        <svg class="ico-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg>
+      </button>
+    </div>
+    <nav class="cat-list" id="catList"></nav>
+    <button class="cat-add" id="catAddBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      <span class="lbl" data-i18n="new_cat">新建分类</span>
+    </button>
+  </aside>
+
+  <main id="stage">
+  <div class="grid" id="grid"></div>
+
+  <div class="empty" id="empty" hidden>
+    <img class="empty-logo" src="brand-logo.png" alt="Thunder·HUB" draggable="false">
+    <h2 data-i18n="empty_h2">把常用的东西收进来</h2>
+    <p data-i18n="empty_p">程序、脚本、文件夹、网址——双击之外，多一个从容的入口。</p>
+    <div class="empty-hints">
+      <span><kbd>A</kbd> <i data-i18n="hint_add">添加收藏</i></span>
+      <span><kbd data-i18n="kbd_drag">拖入</kbd> <i data-i18n="hint_drag">直接收藏</i></span>
+      <span><kbd>Alt+N</kbd> <i data-i18n="hint_newcat">新建分类</i></span>
+      <span><kbd>/</kbd> <i data-i18n="hint_search">搜索</i></span>
+      <span><kbd data-i18n="kbd_dbl">双击名称</kbd> <i data-i18n="hint_rename">重命名</i></span>
+      <span><kbd data-i18n="kbd_right">右键</kbd> <i data-i18n="hint_menu">更多操作</i></span>
+      <span><kbd id="hintHotkeyKbd">Alt+D</kbd> <i data-i18n="hint_hotkey">呼出/隐藏</i></span>
+    </div>
+    <button class="btn-solid big" id="emptyAdd" data-i18n="empty_add">添加第一个收藏</button>
+    <svg class="doodle-arrow" viewBox="0 0 90 60" aria-hidden="true">
+      <path d="M8 8 Q 40 4, 62 26 T 74 52" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="1 6"/>
+      <path d="M66 44 L 74 52 L 82 46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  </main>
+</div>
+
+<!-- 添加弹层 -->
+<div class="modal-veil" id="modalVeil" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-stamp" aria-hidden="true" data-i18n="add_stamp">新收藏</div>
+    <h2 id="modalTitle" data-i18n="add_title">添加收藏</h2>
+    <p class="modal-sub" data-i18n="add_sub">任何双击能启动的东西，都可以放进来。</p>
+
+    <label class="field">
+      <span class="field-label"><span data-i18n="add_name">名称</span> <em data-i18n="add_name_em">可留空，自动取文件名</em></span>
+      <input id="fName" type="text" data-i18n-ph="add_name_ph" placeholder="例如：每日备份" autocomplete="off">
+    </label>
+
+    <label class="field">
+      <span class="field-label" data-i18n="add_path">路径或网址</span>
+      <div class="path-row">
+        <input id="fPath" type="text" data-i18n-ph="add_path_ph" placeholder="C:\…\tool.bat  或  https://…" autocomplete="off" spellcheck="false">
+        <button class="btn-ghost" id="browseBtn" type="button" data-i18n="browse">浏览…</button>
+      </div>
+    </label>
+
+    <div class="detect" id="detectLine" hidden></div>
+    <div class="modal-error" id="modalError" hidden></div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelBtn" type="button" data-i18n="cancel">取消</button>
+      <button class="btn-solid" id="confirmBtn" type="button" data-i18n="confirm_add">收入启动台</button>
+    </div>
+  </div>
+</div>
+
+<!-- 右键菜单 -->
+<div class="menu" id="menu" hidden>
+  <button data-act="launch" data-i18n="menu_launch">启动</button>
+  <button data-act="folder" data-i18n="menu_folder">打开所在位置</button>
+  <button data-act="rename" data-i18n="menu_rename">重命名</button>
+  <div class="menu-sep"></div>
+  <button data-act="movecat" data-i18n="menu_movecat">移到分类…</button>
+  <div class="menu-sep"></div>
+  <button data-act="remove" class="danger" data-i18n="menu_remove">移除</button>
+</div>
+
+<!-- 拖文件进来 -->
+<div class="drop-veil" id="dropVeil" hidden>
+  <div class="drop-box">
+    <svg viewBox="0 0 24 24" class="drop-ico" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>
+    </svg>
+    <h2 data-i18n="drop_h2">松手，收入启动台</h2>
+    <p data-i18n="drop_p">bat、exe、快捷方式、文件夹——拖进来就能点着开</p>
+  </div>
+</div>
+
+<!-- 设置弹层 -->
+<div class="modal-veil" id="settingsVeil" hidden>
+  <div class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-stamp" aria-hidden="true" data-i18n="set_stamp">偏好</div>
+    <h2 id="settingsTitle" data-i18n="set_title">设置</h2>
+    <p class="modal-sub" data-i18n="set_sub">开机自启、热键、关闭行为——都听你差遣。</p>
+
+    <div class="set-list">
+      <div class="set-row">
+        <div class="set-text">
+          <span class="set-label" data-i18n="set_autostart">开机自动启动</span>
+          <span class="set-desc" data-i18n="set_autostart_d">登录 Windows 后，BAT·HUB 自动驻留系统托盘</span>
+        </div>
+        <button class="switch" id="swAutostart" role="switch" aria-checked="false" aria-label="开机自动启动"><span class="knob"></span></button>
+      </div>
+
+      <div class="set-row">
+        <div class="set-text">
+          <span class="set-label" data-i18n="set_hidden">启动时只驻留托盘</span>
+          <span class="set-desc" id="startHiddenDesc">打开程序不弹主窗口，安静待在右下角（Alt+D 随时唤出）</span>
+        </div>
+        <button class="switch" id="swStartHidden" role="switch" aria-checked="false" aria-label="启动时只驻留托盘"><span class="knob"></span></button>
+      </div>
+
+      <div class="set-row">
+        <div class="set-text">
+          <span class="set-label" data-i18n="set_hotkey">全局热键</span>
+          <span class="set-desc"><span data-i18n="set_hotkey_d">任何界面按下组合键，呼出 / 隐藏主窗口</span><em class="set-note" id="hotkeyNote" data-i18n="set_note_restart" hidden>改动将在下次启动后生效</em></span>
+        </div>
+        <button class="hotkey-chip" id="hotkeyChip" data-i18n-title="chip_tip" title="点击后按下新的组合键">Alt + D</button>
+        <button class="switch" id="swHotkey" role="switch" aria-checked="false" aria-label="全局热键"><span class="knob"></span></button>
+      </div>
+
+      <div class="set-row">
+        <div class="set-text">
+          <span class="set-label" data-i18n="set_quit">关闭窗口时直接退出</span>
+          <span class="set-desc" data-i18n="set_quit_d">默认关闭只是收进托盘；开启后 Alt+F4 / 关闭即彻底退出</span>
+        </div>
+        <button class="switch" id="swCloseQuit" role="switch" aria-checked="false" aria-label="关闭窗口时直接退出"><span class="knob"></span></button>
+      </div>
+      <div class="set-row">
+        <div class="set-text">
+          <span class="set-label" data-i18n="set_data">数据</span>
+          <span class="set-desc" data-i18n="set_data_d">导出备份，或从备份文件恢复分类和收藏</span>
+        </div>
+        <div class="set-actions">
+          <button class="btn-ghost" id="exportBtn" type="button" data-i18n="data_export">导出…</button>
+          <button class="btn-ghost" id="importBtn" type="button" data-i18n="data_import">导入…</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" id="replayTour" type="button" data-i18n="tour_replay">重新观看新手指引</button>
+      <button class="btn-solid" id="settingsDone" type="button" data-i18n="done">完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 二次确认弹层 -->
+<div class="modal-veil" id="confirmVeil" hidden>
+  <div class="modal confirm-modal" role="alertdialog" aria-modal="true">
+    <div class="modal-stamp" id="confirmStamp" aria-hidden="true">确认</div>
+    <h3 id="confirmTitle"></h3>
+    <p class="modal-sub" id="confirmText"></p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="confirmCancel" type="button" data-i18n="cancel">取消</button>
+      <button class="btn-solid danger-solid" id="confirmOk" type="button">删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新手引导 -->
+<div class="tour-overlay" id="tourOverlay" hidden>
+  <div class="tour-hole" id="tourHole" hidden></div>
+  <div class="tour-card" id="tourCard">
+    <div class="modal-stamp" aria-hidden="true" data-i18n="tour_stamp">指引</div>
+    <h3 id="tourTitle"></h3>
+    <p id="tourText"></p>
+    <div class="tour-foot">
+      <div class="tour-dots" id="tourDots"></div>
+      <div class="tour-btns">
+        <button class="btn-ghost" id="tourSkip" type="button" data-i18n="tour_skip">跳过</button>
+        <button class="btn-ghost" id="tourPrev" type="button" data-i18n="tour_prev" hidden>上一步</button>
+        <button class="btn-solid" id="tourNext" type="button" data-i18n="tour_next">下一步</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 打赏封印（右下角） -->
+<button class="donate-seal" id="donateBtn" data-i18n-title="donate_tip" title="请我喝杯咖啡" aria-label="donate">
+  <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+</button>
+
+<!-- 打赏弹层 -->
+<div class="modal-veil" id="donateVeil" hidden>
+  <div class="modal donate-modal" role="dialog" aria-modal="true" aria-labelledby="donateTitle">
+    <div class="modal-stamp" aria-hidden="true" data-i18n="donate_stamp">投喂</div>
+    <h2 id="donateTitle" data-i18n="donate_title">请作者喝杯咖啡</h2>
+    <p class="modal-sub" data-i18n="donate_sub">BAT·HUB 免费，且会一直免费。如果它帮你省了点时间，欢迎自愿投喂——金额随意，一句谢谢也很好。</p>
+
+    <div class="donate-qr" id="donateQr">
+      <img src="donate-qr.png" alt="收款码" id="donateQrImg">
+      <span class="donate-qr-empty" id="donateQrEmpty" data-i18n="donate_qr_empty" hidden>二维码稍后放进来 · donate-qr.png</span>
+    </div>
+
+    <div class="donate-email">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      <span id="donateEmail">your-email@example.com</span>
+      <button class="donate-copy" id="donateCopy" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <span data-i18n="donate_copy">复制</span>
+      </button>
+    </div>
+
+    <p class="donate-note" data-i18n="donate_note">完全自愿 · 不打赏也能一直用</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>

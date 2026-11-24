@@ -1,0 +1,12 @@
+# 用户数据（不上传）
+launcher-data.json
+launcher-data.json.bad
+
+# 运行产物
+.webview2/
+.icons/
+__pycache__/
+*.pyc
+
+# 打包输出
+dist/
