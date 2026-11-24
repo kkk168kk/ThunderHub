@@ -648,6 +648,25 @@ def start_hotkey(toggle, combo="alt+d"):
 _last_toggle = [0.0]
 
 
+def _force_foreground(u, h):
+    """把窗口提到最前（AttachThreadInput 绕过 Windows 前台锁定）。"""
+    import ctypes
+    k32 = ctypes.windll.kernel32
+    fg = u.GetForegroundWindow()
+    cur_tid = k32.GetCurrentThreadId()
+    fg_tid = u.GetWindowThreadProcessId(fg, None) if fg else 0
+    attached = False
+    if fg_tid and fg_tid != cur_tid:
+        attached = bool(u.AttachThreadInput(cur_tid, fg_tid, True))
+    u.ShowWindow(h, 9)      # SW_RESTORE
+    u.BringWindowToTop(h)
+    u.SetForegroundWindow(h)
+    u.SetActiveWindow(h)
+    u.SetFocus(h)
+    if attached:
+        u.AttachThreadInput(cur_tid, fg_tid, False)
+
+
 def toggle_window():
     import ctypes
     u = ctypes.windll.user32
@@ -660,24 +679,12 @@ def toggle_window():
         return
     _last_toggle[0] = now
 
-    if u.IsWindowVisible(h) and not u.IsIconic(h):
-        u.ShowWindow(h, 0)  # SW_HIDE
+    visible = u.IsWindowVisible(h) and not u.IsIconic(h)
+    if visible and u.GetForegroundWindow() == h:
+        u.ShowWindow(h, 0)  # 在前台 → 隐藏
     else:
-        # 前台锁定规避：AttachThreadInput 借用前台线程的权限
-        k32 = ctypes.windll.kernel32
-        fg = u.GetForegroundWindow()
-        cur_tid = k32.GetCurrentThreadId()
-        fg_tid = u.GetWindowThreadProcessId(fg, None) if fg else 0
-        attached = False
-        if fg_tid and fg_tid != cur_tid:
-            attached = bool(u.AttachThreadInput(cur_tid, fg_tid, True))
-        u.ShowWindow(h, 9)      # SW_RESTORE
-        u.BringWindowToTop(h)
-        u.SetForegroundWindow(h)
-        u.SetActiveWindow(h)
-        u.SetFocus(h)
-        if attached:
-            u.AttachThreadInput(cur_tid, fg_tid, False)
+        # 不可见，或可见但被其它窗口盖住 → 提到最前
+        _force_foreground(u, h)
 
 
 def _load_logo_image():
